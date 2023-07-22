@@ -1,1 +1,1 @@
-# LING_508_PROJECT
+# LING 508 Final Project
