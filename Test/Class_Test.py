@@ -1,4 +1,4 @@
-from App.Classes import MenuItem, Review
+from App.Classes import *
 
 def test_menu_item_creation(self):
     menu_item = MenuItem("Burger")
