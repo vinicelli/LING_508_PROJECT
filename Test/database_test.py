@@ -1,3 +1,6 @@
+import unittest
+import mysql.connector
+
 class TestDatabaseCreation(unittest.TestCase):
     def test_database_connection(self):
         # Test if the database connection is successful
