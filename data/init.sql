@@ -1,5 +1,7 @@
 CREATE DATABASE reviews;
 
+use reviews;
+
 CREATE TABLE restaurants (
 
     id INT AUTO_INCREMENT PRIMARY KEY,
@@ -7,20 +9,15 @@ CREATE TABLE restaurants (
     item_query VARCHAR(255)
 
 
-)
+);
 
-CREATE TABLE reviews  (
+CREATE TABLE reviews (
     id INT AUTO_INCREMENT PRIMARY KEY,
     restaurant_id INT,
-    item_query_id INT,
     author VARCHAR(255),
     rating FLOAT,
     review_text TEXT,
     sentiment_score FLOAT,
-    FOREIGN KEY (restaurant_id) REFERENCES restaurants(id),
-    FOREIGN KEY (item_query_id) REFERENCES restaurants(id)
-
-
-
-)
+    FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+);
 
