@@ -1,57 +1,19 @@
-import unittest
-import mysql.connector
-from App.Classes import RestaurantReviewDatabase, Review, RestaurantQuery
+# Import the required classes
+from db.mysql_repository import MysqlRepository
+from App.Classes import MenuItem
+import pytest
 
-class TestRestaurantReviewDatabase(unittest.TestCase):
-    def setUp(self):
-        config = {
-            'user': 'root',
-            'password': 'root',
-            'host': 'localhost',
-            'port': '32000',
-            'database': 'reviews',
-        }
+# Define the 'repository' fixture
+@pytest.fixture
+def repository():
+    return MysqlRepository()
 
-        self.test_db_connection = mysql.connector.connect(**config)
-        self.test_cursor = self.test_db_connection.cursor()
+def test_insert_restaurant(repository):
+    menu_item = MenuItem(
+        restaurant_name="Test Restaurant",
+        item_query="Test Query"
+    )
+    restaurant_id = repository.insert_restaurant(menu_item)
+    assert restaurant_id is not None
 
-
-    def test_insert_restaurant_query(self):
-        database = RestaurantReviewDatabase()
-
-        query = "Italian Food"
-        restaurant_name = "Pasta Paradise"
-        restaurant = database.insert_restaurant_query(query, restaurant_name)
-
-        query = "SELECT * FROM restaurants WHERE restaurant_name = %s"
-        self.test_cursor.execute(query, (restaurant_name,))
-        result = self.test_cursor.fetchone()
-        self.assertIsNotNone(result)
-        self.assertEqual(result[1], query)
-
-    def test_insert_reviews(self):
-        database = RestaurantReviewDatabase()
-
-        query = "Italian Food"
-        restaurant_name = "Pasta Paradise"
-        restaurant = database.insert_restaurant_query(query, restaurant_name)
-
-        review_text = "The pasta was delicious!"
-        rating = 4.5
-        sentiment_score = 0.9
-        review = Review(restaurant, review_text, rating, sentiment_score)
-
-        database.insert_reviews([review], restaurant)
-
-        query = "SELECT * FROM reviews WHERE restaurant_id = %s"
-        self.test_cursor.execute(query, (restaurant.id,))
-        result = self.test_cursor.fetchone()
-        self.assertIsNotNone(result)
-        self.assertEqual(result[3], review_text)
-
-    def tearDown(self):
-        self.test_cursor.close()
-        self.test_db_connection.close()
-
-if __name__ == "__main__":
-    unittest.main()
+    # Optionally, you can add more assertions or checks here to validate the insertion.

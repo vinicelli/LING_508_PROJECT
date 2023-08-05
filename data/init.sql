@@ -1,6 +1,6 @@
 CREATE DATABASE reviews;
 
-use reviews;
+USE reviews;
 
 CREATE TABLE restaurants (
 
@@ -20,4 +20,3 @@ CREATE TABLE reviews (
     sentiment_score FLOAT,
     FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
 );
-
