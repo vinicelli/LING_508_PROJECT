@@ -16,9 +16,39 @@ class MysqlRepository(Repository):
         self.connection = mysql.connector.connect(**config)
         self.cursor = self.connection.cursor()
 
+        # Create tables if they do not exist
+        self.create_tables()
+
     def __del__(self):
         self.cursor.close()
         self.connection.close()
+
+    def create_tables(self):
+        # SQL statements to create tables
+        create_restaurants_table = """
+            CREATE TABLE IF NOT EXISTS restaurants (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                restaurant_name VARCHAR(255),
+                item_query VARCHAR(255)
+            )
+        """
+
+        create_reviews_table = """
+            CREATE TABLE IF NOT EXISTS reviews (
+                id INT AUTO_INCREMENT PRIMARY KEY,
+                restaurant_id INT,
+                author VARCHAR(255),
+                rating FLOAT,
+                review_text TEXT,
+                sentiment_score FLOAT,
+                FOREIGN KEY (restaurant_id) REFERENCES restaurants(id)
+            )
+        """
+
+        # Execute table creation SQL statements
+        self.cursor.execute(create_restaurants_table)
+        self.cursor.execute(create_reviews_table)
+        self.connection.commit()
 
     def insert_restaurant(self, menu_item: MenuItem):
         sql = 'INSERT INTO restaurants (restaurant_name, item_query) VALUES (%s, %s)'
