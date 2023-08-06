@@ -1,4 +1,4 @@
-class MenuItem:
+class MenuQuery:
     def __init__(self, restaurant_name, item_query, id=None):
         self.id = id
         self.restaurant_name = restaurant_name
@@ -12,3 +12,8 @@ class Review:
         self.rating = rating
         self.review_text = review_text
         self.sentiment_score = sentiment_score
+
+    def search_review_text(self, keyword):
+
+        return keyword.lower() in self.review_text.lower()
+

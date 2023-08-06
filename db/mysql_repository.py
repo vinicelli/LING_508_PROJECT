@@ -1,5 +1,5 @@
 from db.repository import Repository
-from App.Classes import MenuItem, Review
+from App.Classes import MenuQuery, Review
 import mysql.connector
 
 class MysqlRepository(Repository):
@@ -50,7 +50,7 @@ class MysqlRepository(Repository):
         self.cursor.execute(create_reviews_table)
         self.connection.commit()
 
-    def insert_restaurant(self, menu_item: MenuItem):
+    def insert_restaurant(self, menu_item: MenuQuery):
         sql = 'INSERT INTO restaurants (restaurant_name, item_query) VALUES (%s, %s)'
         values = (menu_item.restaurant_name, menu_item.item_query)
         self.cursor.execute(sql, values)
@@ -63,7 +63,7 @@ class MysqlRepository(Repository):
         self.cursor.execute(sql, values)
         self.connection.commit()
 
-    def get_restaurant_id(self, menu_item: MenuItem) -> int:
+    def get_restaurant_id(self, menu_item: MenuQuery) -> int:
         sql = 'SELECT id FROM restaurants WHERE restaurant_name = %s AND item_query = %s'
         values = (menu_item.restaurant_name, menu_item.item_query)
         self.cursor.execute(sql, values)
