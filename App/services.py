@@ -1,12 +1,11 @@
 from App.Classes import *
-import db.mysql_repository
-
+from db.mysql_repository import MysqlRepository
 test_restaurant = MenuQuery(
                             id=1,
                             restaurant_name="fantani's",
                             item_query='pizza')
 
-test_reviews = reviews = [
+test_reviews = [
     Review(
         restaurant_id=2,
         author="Foodie456",
@@ -61,13 +60,16 @@ test_reviews = reviews = [
 
 class Services:
     def __init__(self):
-        self.repo = db.mysql_repository.MysqlRepository()
+        self.repo = MysqlRepository()
 
-    def add_to_reviews(self, menu_item):
+    def add_to_reviews(self, menu_item_name):
+        restaurant_id = self.repo.get_restaurant_id(MenuQuery(id=1, restaurant_name="fantani's", item_query=menu_item_name))
+
         for review in test_reviews:
-            if review.search_review_text(menu_item):
+            if menu_item_name.lower() in review.review_text.lower():
+                review.restaurant_id = restaurant_id
                 self.repo.insert_review(review)
 
-# Instantiate the Services class and call the add_to_reviews method.
+
 services = Services()
 services.add_to_reviews('pizza')

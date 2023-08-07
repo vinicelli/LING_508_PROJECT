@@ -16,7 +16,6 @@ class MysqlRepository(Repository):
         self.connection = mysql.connector.connect(**config)
         self.cursor = self.connection.cursor()
 
-        # Create tables if they do not exist
         self.create_tables()
 
     def __del__(self):
@@ -24,7 +23,6 @@ class MysqlRepository(Repository):
         self.connection.close()
 
     def create_tables(self):
-        # SQL statements to create tables
         create_restaurants_table = """
             CREATE TABLE IF NOT EXISTS restaurants (
                 id INT AUTO_INCREMENT PRIMARY KEY,
@@ -45,7 +43,6 @@ class MysqlRepository(Repository):
             )
         """
 
-        # Execute table creation SQL statements
         self.cursor.execute(create_restaurants_table)
         self.cursor.execute(create_reviews_table)
         self.connection.commit()
