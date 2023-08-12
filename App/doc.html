@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Review API</title>
+    <style>
+        div {
+            border: 1px solid #ccc;
+            padding: 10px;
+            margin-top: 10px;
+        }
+    </style>
+</head>
+<body>
+<h1>Welcome to the Restaurant Review API</h1>
+<h2>Endpoints</h2>
+
+<h3>Add a Review</h3>
+<div>
+    <p>Endpoint: <code>/reviews</code></p>
+    <p>Request type: POST</p>
+    <p>Request body: JSON with field "menu_item_name", e.g.</p>
+    <pre>
+      {
+        "menu_item_name": "Burger"
+      }
+    </pre>
+    <p>Response: JSON message confirming the addition, e.g.</p>
+    <pre>
+      {
+        "message": "Reviews added successfully!"
+      }
+    </pre>
+</div>
+
+<h3>Get All Reviews</h3>
+<div>
+    <p>Endpoint: <code>/reviews</code></p>
+    <p>Request type: GET</p>
+    <p>Response: JSON array of reviews, e.g.</p>
+    <pre>
+      [
+        {
+          "restaurant_name": "Burger King",
+          "review": "Great food!"
+        },
+        ...
+      ]
+    </pre>
+</div>
+
+<h3>Get Reviews for a Specific Restaurant</h3>
+<div>
+    <p>Endpoint: <code>/restaurants/&lt;restaurant_name&gt;/reviews</code></p>
+    <p>Request type: GET</p>
+    <p>Replace &lt;restaurant_name&gt; with the desired restaurant's name.</p>
+    <p>Response: JSON array of reviews for the specified restaurant, e.g.</p>
+    <pre>
+      [
+        {
+          "restaurant_name": "Burger King",
+          "review": "Awesome burger!"
+        },
+        ...
+      ]
+    </pre>
+</div>
+</body>
+</html>

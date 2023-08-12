@@ -13,6 +13,12 @@ class Review:
         self.review_text = review_text
         self.sentiment_score = sentiment_score
 
+    def to_dict(self):
+        return {
+            "title": self.title,
+            "content": self.content
+        }
+
     def search_review_text(self, keyword):
 
         return keyword.lower() in self.review_text.lower()
