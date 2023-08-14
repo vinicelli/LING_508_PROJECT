@@ -15,8 +15,12 @@ class Review:
 
     def to_dict(self):
         return {
-            "title": self.title,
-            "content": self.content
+            "id": self.id,
+            "restaurant_id": self.restaurant_id,
+            "author": self.author,
+            "rating": self.rating,
+            "review_text": self.review_text,
+            "sentiment_score": self.sentiment_score
         }
 
     def search_review_text(self, keyword):

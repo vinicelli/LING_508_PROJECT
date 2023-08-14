@@ -60,6 +60,23 @@ class MysqlRepository(Repository):
         self.cursor.execute(sql, values)
         self.connection.commit()
 
+    def get_all_reviews(self):
+        sql = 'SELECT * FROM reviews'
+        self.cursor.execute(sql)
+        rows = self.cursor.fetchall()
+        reviews = []
+        for row in rows:
+            review = Review(
+                id=row[0],
+                restaurant_id=row[1],
+                author=row[2],
+                rating=row[3],
+                review_text=row[4],
+                sentiment_score=row[5]
+            )
+            reviews.append(review)
+        return reviews
+
     def get_restaurant_id(self, menu_item: MenuQuery) -> int:
         sql = 'SELECT id FROM restaurants WHERE restaurant_name = %s AND item_query = %s'
         values = (menu_item.restaurant_name, menu_item.item_query)
@@ -71,3 +88,8 @@ class MysqlRepository(Repository):
             # If the restaurant does not exist in the database, insert it and get its ID
             self.insert_restaurant(menu_item)
             return self.cursor.lastrowid
+
+    def clear_all_reviews(self):
+        sql = 'DELETE FROM reviews'
+        self.cursor.execute(sql)
+        self.connection.commit()

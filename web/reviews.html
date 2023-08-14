@@ -1,0 +1,118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Restaurant Reviewer</title>
+</head>
+<body>
+
+<h1>Restaurant Reviewer</h1>
+
+<h2>Add a Review</h2>
+
+<form id="formReview">
+    <div class="input-group">
+        <label for="menu_item_name">Menu Item Name: </label>
+        <input id="menu_item_name" name="menu_item_name" type="text" required/>
+    </div>
+    <button type="submit">Submit Review</button>
+</form>
+
+<h2>Response: </h2>
+<pre id="response"></pre>
+
+<h2>Stored Reviews</h2>
+<button onclick="fetchAllReviews()">Fetch All Reviews</button>
+<ul id="allReviewsList"></ul>
+
+<h2>Admin Actions</h2>
+<button onclick="clearAllReviews()">Clear All Reviews</button>
+
+</body>
+
+<script>
+async function handleReviewSubmit(event) {
+    event.preventDefault();
+
+    const data = new FormData(event.target);
+    const value = Object.fromEntries(data.entries());
+    value.menu_item_name = data.get("menu_item_name");
+    console.log({value});
+
+    const response = await fetch('http://localhost:5000/reviews', {
+        method: 'POST',
+        body: JSON.stringify(value),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    const myJson = await response.json();
+    console.log(myJson);
+    document.getElementById('response').textContent = JSON.stringify(myJson, undefined, 2);
+}
+
+const formReview = document.getElementById("formReview");
+formReview.addEventListener("submit", async (e) => handleReviewSubmit(e), false);
+
+async function fetchReviews() {
+    try {
+        const response = await fetch('http://localhost:5000/reviews');
+        const reviews = await response.json();
+        const reviewsList = document.getElementById('reviewsList');
+
+        // Clear current list
+        reviewsList.innerHTML = '';
+
+        // Populate the list with fetched reviews
+        reviews.forEach(review => {
+            const li = document.createElement('li');
+            li.textContent = review.menu_item_name; // Adjust based on the review structure
+            reviewsList.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error fetching reviews:", error);
+    }
+}
+
+async function fetchAllReviews() {
+    try {
+        const response = await fetch('http://localhost:5000/all-reviews');
+        const allReviews = await response.json();
+        const allReviewsList = document.getElementById('allReviewsList');
+
+        // Clear current list
+        allReviewsList.innerHTML = '';
+
+        // Populate the list with fetched reviews
+        allReviews.forEach(review => {
+            const li = document.createElement('li');
+            li.textContent = review.review_text; // Adjust based on the review structure
+            allReviewsList.appendChild(li);
+        });
+    } catch (error) {
+        console.error("Error fetching all reviews:", error);
+    }
+}
+
+async function clearAllReviews() {
+    try {
+        const response = await fetch('http://localhost:5000/clear-reviews', {
+            method: 'POST'
+        });
+        const result = await response.json();
+        console.log(result);
+        if(response.ok) {
+            // Optionally, clear the displayed reviews list as well
+            const allReviewsList = document.getElementById('allReviewsList');
+            allReviewsList.innerHTML = '';
+        }
+    } catch (error) {
+        console.error("Error clearing reviews:", error);
+    }
+}
+
+
+
+</script>
+
+</html>
