@@ -19,8 +19,3 @@ services:
       MYSQL_ROOT_PASSWORD: root
     volumes:
       - ./data:/docker-entrypoint-initdb.d/:ro
-    healthcheck:
-      test: ["CMD", "mysqladmin" ,"ping", "-h", "db"]
-      interval: 10s
-      timeout: 10s
-      retries: 10

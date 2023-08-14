@@ -85,7 +85,6 @@ class MysqlRepository(Repository):
         if result:
             return result[0]
         else:
-            # If the restaurant does not exist in the database, insert it and get its ID
             self.insert_restaurant(menu_item)
             return self.cursor.lastrowid
 
