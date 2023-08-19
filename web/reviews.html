@@ -2,24 +2,63 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <title>Restaurant Reviewer</title>
+    <title>Restaurant Review Sentiment Database</title>
 </head>
 <body>
 
-<h1>Restaurant Reviewer</h1>
+<h1>Restaurant Review Sentiment Database</h1>
+
+<h2>Add a Restaurant</h2>
+
+<form id="formAddRestaurant">
+    <div class="input-group">
+        <label for="restaurant_name">Restaurant Name: </label>
+        <input id="restaurant_name" name="restaurant_name" type="text" required/>
+    </div>
+    <button type="submit">Add Restaurant</button>
+</form>
 
 <h2>Add a Review</h2>
 
-<form id="formReview">
+<form id="formAddReview">
     <div class="input-group">
-        <label for="menu_item_name">Menu Item Name: </label>
-        <input id="menu_item_name" name="menu_item_name" type="text" required/>
+        <label for="restaurant_id">Restaurant ID: </label>
+        <input id="restaurant_id" name="restaurant_id" type="number" required/>
     </div>
-    <button type="submit">Submit Review</button>
+    <div class="input-group">
+        <label for="author">Author: </label>
+        <input id="author" name="author" type="text" required/>
+    </div>
+    <div class="input-group">
+        <label for="rating">Rating: </label>
+        <input id="rating" name="rating" type="number" min="1" max="5" required/>
+    </div>
+    <div class="input-group">
+        <label for="review_text">Review Text: </label>
+        <textarea id="review_text" name="review_text" required></textarea>
+    </div>
+    <button type="submit">Add Review</button>
 </form>
 
-<h2>Response: </h2>
-<pre id="response"></pre>
+<h2>Get Restaurant ID by Name</h2>
+<form id="formGetRestaurantId">
+    <div class="input-group">
+        <label for="restaurant_name_id">Restaurant Name: </label>
+        <input id="restaurant_name_id" name="restaurant_name_id" type="text" required/>
+    </div>
+    <button type="submit">Get Restaurant ID</button>
+</form>
+<p>Restaurant ID: <span id="restaurantId"></span></p>
+
+<h2>Fetch Reviews by Restaurant</h2>
+<form id="formGetReviewsByRestaurant">
+    <div class="input-group">
+        <label for="restaurant_name_fetch">Restaurant Name: </label>
+        <input id="restaurant_name_fetch" name="restaurant_name_fetch" type="text" required/>
+    </div>
+    <button type="submit">Fetch Reviews</button>
+</form>
+<ul id="reviewsListByRestaurant"></ul>
 
 <h2>Stored Reviews</h2>
 <button onclick="fetchAllReviews()">Fetch All Reviews</button>
@@ -27,38 +66,74 @@
 
 <h2>Admin Actions</h2>
 <button onclick="clearAllReviews()">Clear All Reviews</button>
+<h2>Response: </h2>
+<pre id="clearResponse"></pre>
 
 </body>
 
 <script>
-async function handleReviewSubmit(event) {
+
+async function handleAddRestaurantSubmit(event) {
     event.preventDefault();
 
     const data = new FormData(event.target);
-    const value = Object.fromEntries(data.entries());
-    value.menu_item_name = data.get("menu_item_name");
-    console.log({value});
+    const restaurant_name = data.get("restaurant_name");
 
-    const response = await fetch('http://localhost:5000/reviews', {
+    const response = await fetch('/restaurants', {
         method: 'POST',
-        body: JSON.stringify(value),
+        body: JSON.stringify({name: restaurant_name}),
         headers: {
             'Content-Type': 'application/json',
         }
     });
     const myJson = await response.json();
     console.log(myJson);
-    document.getElementById('response').textContent = JSON.stringify(myJson, undefined, 2);
+    document.getElementById('clearResponse').textContent = JSON.stringify(myJson, undefined, 2);
 }
 
-const formReview = document.getElementById("formReview");
-formReview.addEventListener("submit", async (e) => handleReviewSubmit(e), false);
+const formAddRestaurant = document.getElementById("formAddRestaurant");
+formAddRestaurant.addEventListener("submit", async (e) => handleAddRestaurantSubmit(e), false);
 
-async function fetchReviews() {
+async function handleAddReviewSubmit(event) {
+    event.preventDefault();
+
+    const data = new FormData(event.target);
+    const restaurant_id = data.get("restaurant_id"); // Fix variable name
+    const author = data.get("author");
+    const rating = data.get("rating");
+    const review_text = data.get("review_text");
+
+    const review = {
+        restaurant_id: restaurant_id, // Fix variable name
+        author: author,
+        rating: rating,
+        review_text: review_text
+    };
+
+    const response = await fetch('/reviews', {
+        method: 'POST',
+        body: JSON.stringify(review),
+        headers: {
+            'Content-Type': 'application/json',
+        }
+    });
+    const myJson = await response.json();
+    console.log(myJson);
+    document.getElementById('clearResponse').textContent = JSON.stringify(myJson, undefined, 2);
+}
+
+const formAddReview = document.getElementById("formAddReview");
+formAddReview.addEventListener("submit", async (e) => handleAddReviewSubmit(e), false);
+
+async function handleGetReviewsByRestaurantSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const restaurant_name_fetch = data.get("restaurant_name_fetch");
+
     try {
-        const response = await fetch('http://localhost:5000/reviews');
+        const response = await fetch(`http://localhost:5000/reviews-by-restaurant/${restaurant_name_fetch}`);
         const reviews = await response.json();
-        const reviewsList = document.getElementById('reviewsList');
+        const reviewsList = document.getElementById('reviewsListByRestaurant');
 
         // Clear current list
         reviewsList.innerHTML = '';
@@ -66,13 +141,17 @@ async function fetchReviews() {
         // Populate the list with fetched reviews
         reviews.forEach(review => {
             const li = document.createElement('li');
-            li.textContent = review.menu_item_name; // Adjust based on the review structure
+            li.textContent = `${review.author}: ${review.review_text}`; // Adjust based on the review structure
             reviewsList.appendChild(li);
         });
     } catch (error) {
         console.error("Error fetching reviews:", error);
     }
 }
+
+const formGetReviewsByRestaurant = document.getElementById("formGetReviewsByRestaurant");
+formGetReviewsByRestaurant.addEventListener("submit", async (e) => handleGetReviewsByRestaurantSubmit(e), false);
+
 
 async function fetchAllReviews() {
     try {
@@ -86,7 +165,7 @@ async function fetchAllReviews() {
         // Populate the list with fetched reviews
         allReviews.forEach(review => {
             const li = document.createElement('li');
-            li.textContent = review.review_text; // Adjust based on the review structure
+            li.textContent = `ID: ${review.id}, Restaurant ID: ${review.restaurant_id}, Author: ${review.author}, Rating: ${review.rating}, Review Text: ${review.review_text}, Sentiment Score: ${review.sentiment_score}`;
             allReviewsList.appendChild(li);
         });
     } catch (error) {
@@ -96,22 +175,38 @@ async function fetchAllReviews() {
 
 async function clearAllReviews() {
     try {
-        const response = await fetch('http://localhost:5000/clear-reviews', {
+        const clearResponse = await fetch('http://localhost:5000/clear-reviews', {
             method: 'POST'
         });
-        const result = await response.json();
+        const result = await clearResponse.json();
         console.log(result);
-        if(response.ok) {
-            // Optionally, clear the displayed reviews list as well
+        if(clearResponse.ok) {
             const allReviewsList = document.getElementById('allReviewsList');
             allReviewsList.innerHTML = '';
+            document.getElementById('clearResponse').textContent = JSON.stringify(result, undefined, 2);
         }
     } catch (error) {
         console.error("Error clearing reviews:", error);
     }
 }
 
+async function handleGetRestaurantIdSubmit(event) {
+    event.preventDefault();
+    const data = new FormData(event.target);
+    const restaurant_name_id = data.get("restaurant_name_id");
 
+    try {
+        const response = await fetch(`http://localhost:5000/get-restaurant-id?restaurant_name=${restaurant_name_id}`);
+        const result = await response.json();
+        const restaurantIdElement = document.getElementById('restaurantId');
+        restaurantIdElement.textContent = result.restaurant_id;
+    } catch (error) {
+        console.error("Error fetching restaurant ID:", error);
+    }
+}
+
+const formGetRestaurantId = document.getElementById("formGetRestaurantId");
+formGetRestaurantId.addEventListener("submit", async (e) => handleGetRestaurantIdSubmit(e), false);
 
 </script>
 

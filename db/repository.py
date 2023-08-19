@@ -1,16 +1,13 @@
 from abc import ABC, abstractmethod
-from App.Classes import MenuQuery, Review
+from App.Classes import Restaurant, Review
 
 class Repository(ABC):
 
     @abstractmethod
-    def insert_restaurant(self, menu_item: MenuQuery) -> None:
+    def insert_restaurant(self, menu_item: Restaurant) -> None:
         raise NotImplementedError
 
     @abstractmethod
-    def insert_review(self, review: Review) -> None:
+    def insert_review(self, review: Restaurant) -> None:
         raise NotImplementedError
 
-    @abstractmethod
-    def get_restaurant_id(self, menu_item: MenuQuery) -> int:
-        raise NotImplementedError

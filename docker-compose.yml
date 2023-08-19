@@ -2,9 +2,6 @@ version: "2.1"
 services:
   app:
     build: .
-    depends_on:
-      db:
-        condition: service_healthy
     links:
       - db
     ports:

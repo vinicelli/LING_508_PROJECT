@@ -5,8 +5,7 @@ USE reviews;
 CREATE TABLE restaurants (
 
     id INT AUTO_INCREMENT PRIMARY KEY,
-    restaurant_name VARCHAR(255),
-    item_query VARCHAR(255)
+    restaurant_name VARCHAR(255)
 
 
 );

@@ -4,3 +4,5 @@ mysql-connector
 Flask
 httpie
 flask-cors
+textblob
+nltk

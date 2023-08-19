@@ -1,8 +1,11 @@
-class MenuQuery:
-    def __init__(self, restaurant_name, item_query, id=None):
+from textblob import TextBlob
+
+
+class Restaurant:
+    def __init__(self, restaurant_name, id=None):
         self.id = id
         self.restaurant_name = restaurant_name
-        self.item_query = item_query
+
 
 class Review:
     def __init__(self, restaurant_id, author, rating, review_text, sentiment_score, id=None):
@@ -27,3 +30,14 @@ class Review:
 
         return keyword.lower() in self.review_text.lower()
 
+    @staticmethod
+    def list_to_reviews(review_list, restaurant_id):
+        reviews = []
+        for data in review_list:
+            author = data[0]
+            rating = data[1]
+            review_text = data[2]
+            sentiment_score = TextBlob(review_text).sentiment.polarity
+            review = Review(restaurant_id, author, rating, review_text, sentiment_score)
+            reviews.append(review)
+        return reviews

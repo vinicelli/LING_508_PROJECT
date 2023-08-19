@@ -1,1 +1,1 @@
-# LING 508 Final Project
+# Restaurant Review Sentiment Database
